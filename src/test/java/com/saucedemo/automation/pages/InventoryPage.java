@@ -4,13 +4,28 @@ import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.options.AriaRole;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class InventoryPage extends BasePage {
 
     private final Locator inventoryList;
+    private final Locator sortByDropdown;
+    private final Locator productPrices;
+    static final Map<String,String> sortTextValueMap = new HashMap<String,String>();
+
+    static {
+        sortTextValueMap.put("Name (A to Z)", "az");
+        sortTextValueMap.put("Name (Z to A)", "za");
+        sortTextValueMap.put("Price (low to high)", "lohi");
+        sortTextValueMap.put("Price (high to low)", "hilo");
+    }
 
     public InventoryPage(Page page) {
         super(page);
         inventoryList = page.getByTestId("inventory-list");
+        sortByDropdown = page.getByTestId("product-sort-container");
+        productPrices = page.getByTestId("inventory-item-price");
     }
 
     public Locator getInventoryList() {
@@ -47,5 +62,17 @@ public class InventoryPage extends BasePage {
 
     public Locator getCartBadge() {
         return page.getByTestId("shopping-cart-badge");
+    }
+
+    public Locator getSortByDropdown() {
+        return sortByDropdown;
+    }
+
+    public Locator getProductPrices() {
+        return productPrices;
+    }
+
+    public String getDropdownValue(String dropdownText) {
+        return sortTextValueMap.get(dropdownText);
     }
 }
