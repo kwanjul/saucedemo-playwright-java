@@ -12,6 +12,7 @@ public class InventoryPage extends BasePage {
     private final Locator inventoryList;
     private final Locator sortByDropdown;
     private final Locator productPrices;
+    private final Locator shoppingCartLink;
     static final Map<String,String> sortTextValueMap = new HashMap<String,String>();
 
     static {
@@ -26,6 +27,7 @@ public class InventoryPage extends BasePage {
         inventoryList = page.getByTestId("inventory-list");
         sortByDropdown = page.getByTestId("product-sort-container");
         productPrices = page.getByTestId("inventory-item-price");
+        shoppingCartLink = page.getByTestId("shopping-cart-link");
     }
 
     public Locator getInventoryList() {
@@ -60,7 +62,7 @@ public class InventoryPage extends BasePage {
                         new Locator.GetByRoleOptions().setName("Remove"));
     }
 
-    public Locator getCartBadge() {
+    public Locator getShoppingCartBadge() {
         return page.getByTestId("shopping-cart-badge");
     }
 
@@ -74,5 +76,9 @@ public class InventoryPage extends BasePage {
 
     public String getDropdownValue(String dropdownText) {
         return sortTextValueMap.get(dropdownText);
+    }
+
+    public Locator getShoppingCartLink() {
+        return shoppingCartLink;
     }
 }

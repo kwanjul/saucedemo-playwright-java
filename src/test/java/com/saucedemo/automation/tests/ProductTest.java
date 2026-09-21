@@ -25,8 +25,9 @@ public class ProductTest extends AuthenticatedBaseTest {
         inventoryPage.getAddToCartButton(productName).click();
         Locator removeButton = inventoryPage.getRemoveButton(productName);
         assertThat(removeButton).isVisible();
-        Locator cartBadge = inventoryPage.getCartBadge();
+        Locator cartBadge = inventoryPage.getShoppingCartBadge();
         assertThat(cartBadge).hasText("1");
+
     }
 
     @Test

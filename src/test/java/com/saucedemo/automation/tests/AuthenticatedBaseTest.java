@@ -5,7 +5,7 @@ import com.saucedemo.automation.pages.InventoryPage;
 import com.saucedemo.automation.pages.LoginPage;
 import org.testng.annotations.BeforeMethod;
 
-public class AuthenticatedBaseTest extends BaseTest {
+public abstract class AuthenticatedBaseTest extends BaseTest {
 
     private final String username = TestConfig.getProperty("test.username");
     protected InventoryPage inventoryPage;
