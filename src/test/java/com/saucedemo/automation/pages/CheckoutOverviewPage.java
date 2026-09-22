@@ -9,6 +9,9 @@ public class CheckoutOverviewPage extends BasePage {
     private final Locator titleLabel;
     private final Locator paymentInformationLabel;
     private final Locator shippingInformationLabel;
+    private final Locator subtotalAmount;
+    private final Locator taxAmount;
+    private final Locator totalAmount;
     private final Locator finishButton;
     private final Locator cancelButton;
 
@@ -17,6 +20,9 @@ public class CheckoutOverviewPage extends BasePage {
         titleLabel = page.getByText("Checkout: Overview");
         paymentInformationLabel = page.getByText("Payment Information:");
         shippingInformationLabel = page.getByText("Shipping Information:");
+        subtotalAmount = page.getByTestId("subtotal-label");
+        taxAmount = page.getByTestId("tax-label");
+        totalAmount = page.getByTestId("total-label");
         finishButton = page.getByRole(AriaRole.BUTTON,
                 new Page.GetByRoleOptions().setName("Finish"));
         cancelButton = page.getByRole(AriaRole.BUTTON,
@@ -40,4 +46,28 @@ public class CheckoutOverviewPage extends BasePage {
     }
 
     public Locator getCancelButton() { return cancelButton; }
+
+    public Locator getProductName(String productName) {
+        return getCheckoutItem(productName)
+                .getByTestId("inventory-item-name");
+    }
+
+    public Locator getProductPrice(String productName) {
+        return getCheckoutItem(productName).getByTestId("inventory-item-price");
+    }
+
+    public Locator getProductQuantity(String productName) {
+        return getCheckoutItem(productName).getByTestId("item-quantity");
+    }
+
+    private Locator getCheckoutItem(String productName) {
+        return page.getByTestId("inventory-item")
+                .filter(new Locator.FilterOptions().setHasText(productName));
+    }
+
+    public Locator getSubtotalAmount() { return subtotalAmount; }
+
+    public Locator getTaxAmount() { return taxAmount; }
+
+    public Locator getTotalAmount() { return totalAmount; }
 }
