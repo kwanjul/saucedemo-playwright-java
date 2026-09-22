@@ -13,6 +13,8 @@ public class InventoryPage extends BasePage {
     private final Locator sortByDropdown;
     private final Locator productPrices;
     private final Locator shoppingCartLink;
+    private final Locator openMenuButton;
+    private final Locator logoutButton;
     static final Map<String,String> sortTextValueMap = new HashMap<String,String>();
 
     static {
@@ -28,6 +30,10 @@ public class InventoryPage extends BasePage {
         sortByDropdown = page.getByTestId("product-sort-container");
         productPrices = page.getByTestId("inventory-item-price");
         shoppingCartLink = page.getByTestId("shopping-cart-link");
+        openMenuButton = page.getByRole(AriaRole.BUTTON,
+                new Page.GetByRoleOptions().setName("Open Menu"));
+        logoutButton = page.getByRole(AriaRole.BUTTON,
+                new Page.GetByRoleOptions().setName("Logout"));
     }
 
     public Locator getInventoryList() {
@@ -80,5 +86,11 @@ public class InventoryPage extends BasePage {
 
     public Locator getShoppingCartLink() {
         return shoppingCartLink;
+    }
+
+    public LoginPage logout() {
+        openMenuButton.click();
+        logoutButton.click();
+        return new LoginPage(page);
     }
 }

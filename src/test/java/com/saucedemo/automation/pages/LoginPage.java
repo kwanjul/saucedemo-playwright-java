@@ -44,6 +44,8 @@ public class LoginPage extends BasePage {
         clickLogin();
     }
 
+    public Locator getLoginButton() { return loginButton; }
+
     public Locator getErrorMessage() {
         return errorMessage;
     }
