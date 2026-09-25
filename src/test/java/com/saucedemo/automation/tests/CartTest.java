@@ -12,16 +12,15 @@ public class CartTest extends AuthenticatedBaseTest {
         String productName = "Sauce Labs Fleece Jacket";
         String productPrice = "$49.99";
 
-        inventoryPage.getAddToCartButton(productName).click();
+        inventoryPage.addProductToCart(productName);
         assertThat(inventoryPage.getShoppingCartBadge()).hasText("1");
-        inventoryPage.getShoppingCartLink().click();
-        CartPage cartPage = new CartPage(page);
+        CartPage cartPage = inventoryPage.openCart();
         assertThat(cartPage.getContinueShoppingButton()).isVisible();
         assertThat(cartPage.getCheckoutButton()).isVisible();
         assertThat(cartPage.getProductName(productName)).hasText(productName);
         assertThat(cartPage.getProductPrice(productName)).hasText(productPrice);
         assertThat(cartPage.getProductQuantity(productName)).hasText("1");
-        cartPage.getRemoveButton(productName).click();
+        cartPage.removeProduct(productName);
         assertThat(cartPage.getCartItem(productName)).hasCount(0);
         assertThat(cartPage.getShoppingCartBadge()).hasCount(0);
     }

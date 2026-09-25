@@ -8,7 +8,7 @@ import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertTha
 public class LogoutTest extends AuthenticatedBaseTest {
 
     @Test
-    void successfulLogoutTest() {
+    void validateSuccessfulLogout() {
         assertThat(inventoryPage.getInventoryList()).isVisible();
         LoginPage loginPage = inventoryPage.logout();
         assertThat(loginPage.getLoginButton()).isVisible();

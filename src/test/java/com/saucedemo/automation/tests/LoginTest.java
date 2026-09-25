@@ -12,7 +12,7 @@ public class LoginTest extends BaseTest {
     private final String username = TestConfig.getProperty("test.username");
 
     @Test
-    void successfulLoginTest() {
+    void validateSuccessfulLogin() {
         LoginPage loginPage = new LoginPage(page);
         loginPage.navigate();
         String password = TestConfig.getProperty("test.password");
@@ -22,7 +22,7 @@ public class LoginTest extends BaseTest {
     }
 
     @Test
-    void invalidPasswordDisplaysError() {
+    void validateInvalidPasswordDisplaysError() {
         LoginPage loginPage = new LoginPage(page);
         loginPage.navigate();
         loginPage.login(username, "bad_password");

@@ -1,9 +1,9 @@
 package com.saucedemo.automation.tests;
 
-import com.saucedemo.automation.pages.CartPage;
+import com.saucedemo.automation.flows.CheckoutFlow;
 import com.saucedemo.automation.pages.CheckoutCompletePage;
-import com.saucedemo.automation.pages.CheckoutInformationPage;
 import com.saucedemo.automation.pages.CheckoutOverviewPage;
+import com.saucedemo.automation.pages.InventoryPage;
 import org.testng.annotations.Test;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
@@ -20,18 +20,10 @@ public class CheckoutOverviewTest extends AuthenticatedBaseTest {
         String lastName = "Doe";
         String zipCode = "07601";
 
-        inventoryPage.getAddToCartButton(productName).click();
-        inventoryPage.getShoppingCartLink().click();
-        CartPage cartPage = new CartPage(page);
-        cartPage.getCheckoutButton().click();
+        CheckoutFlow checkoutFlow = new CheckoutFlow(inventoryPage);
+        CheckoutOverviewPage checkoutOverviewPage = checkoutFlow.navigateToOverview(productName,
+                firstName, lastName, zipCode);
 
-        CheckoutInformationPage checkoutInformationPage = new CheckoutInformationPage(page);
-        checkoutInformationPage.getFirstNameInput().fill(firstName);
-        checkoutInformationPage.getLastNameInput().fill(lastName);
-        checkoutInformationPage.getZipCodeInput().fill(zipCode);
-        checkoutInformationPage.getContinueButton().click();
-
-        CheckoutOverviewPage checkoutOverviewPage = new CheckoutOverviewPage(page);
         assertThat(checkoutOverviewPage.getProductQuantity(productName)).hasText("1");
         assertThat(checkoutOverviewPage.getProductName(productName)).hasText(productName);
         assertThat(checkoutOverviewPage.getProductPrice(productName)).hasText(productPrice);
@@ -47,21 +39,11 @@ public class CheckoutOverviewTest extends AuthenticatedBaseTest {
         String lastName = "Doe";
         String zipCode = "07601";
 
-        inventoryPage.getAddToCartButton(productName).click();
-        inventoryPage.getShoppingCartLink().click();
-        CartPage cartPage = new CartPage(page);
-        cartPage.getCheckoutButton().click();
+        CheckoutFlow checkoutFlow = new CheckoutFlow(inventoryPage);
+        CheckoutOverviewPage checkoutOverviewPage = checkoutFlow.navigateToOverview(productName, firstName,
+                lastName, zipCode);
+        CheckoutCompletePage checkoutCompletePage = checkoutOverviewPage.finishCheckout();
 
-        CheckoutInformationPage checkoutInformationPage = new CheckoutInformationPage(page);
-        checkoutInformationPage.getFirstNameInput().fill(firstName);
-        checkoutInformationPage.getLastNameInput().fill(lastName);
-        checkoutInformationPage.getZipCodeInput().fill(zipCode);
-        checkoutInformationPage.getContinueButton().click();
-
-        CheckoutOverviewPage checkoutOverviewPage = new CheckoutOverviewPage(page);
-        checkoutOverviewPage.getFinishButton().click();
-
-        CheckoutCompletePage checkoutCompletePage = new CheckoutCompletePage(page);
         assertThat(checkoutCompletePage.getTitleLabel()).isVisible();
         assertThat(checkoutCompletePage.getConfirmationHeader())
                 .hasText("Thank you for your order!");
@@ -77,24 +59,13 @@ public class CheckoutOverviewTest extends AuthenticatedBaseTest {
         String lastName = "Doe";
         String zipCode = "07601";
 
-        inventoryPage.getAddToCartButton(productName).click();
-        inventoryPage.getShoppingCartLink().click();
-        CartPage cartPage = new CartPage(page);
-        cartPage.getCheckoutButton().click();
+        CheckoutFlow checkoutFlow = new CheckoutFlow(inventoryPage);
+        CheckoutOverviewPage checkoutOverviewPage = checkoutFlow.navigateToOverview(productName, firstName,
+                lastName, zipCode);
+        CheckoutCompletePage checkoutCompletePage = checkoutOverviewPage.finishCheckout();
+        InventoryPage returnedInventoryPage = checkoutCompletePage.returnToInventory();
 
-        CheckoutInformationPage checkoutInformationPage = new CheckoutInformationPage(page);
-        checkoutInformationPage.getFirstNameInput().fill(firstName);
-        checkoutInformationPage.getLastNameInput().fill(lastName);
-        checkoutInformationPage.getZipCodeInput().fill(zipCode);
-        checkoutInformationPage.getContinueButton().click();
-
-        CheckoutOverviewPage checkoutOverviewPage = new CheckoutOverviewPage(page);
-        checkoutOverviewPage.getFinishButton().click();
-
-        CheckoutCompletePage checkoutCompletePage = new CheckoutCompletePage(page);
-        inventoryPage = checkoutCompletePage.clickBackHomeButton();
-        assertThat(inventoryPage.getInventoryList()).isVisible();
-        assertThat(inventoryPage.getShoppingCartBadge()).hasCount(0);
+        assertThat(returnedInventoryPage.getInventoryList()).isVisible();
+        assertThat(returnedInventoryPage.getShoppingCartBadge()).hasCount(0);
     }
-
 }

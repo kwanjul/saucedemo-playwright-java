@@ -1,6 +1,6 @@
 package com.saucedemo.automation.tests;
 
-import com.saucedemo.automation.pages.CartPage;
+import com.saucedemo.automation.flows.CheckoutFlow;
 import com.saucedemo.automation.pages.CheckoutInformationPage;
 import com.saucedemo.automation.pages.CheckoutOverviewPage;
 import org.testng.annotations.Test;
@@ -13,11 +13,9 @@ public class CheckoutInformationTest extends AuthenticatedBaseTest {
     void validateRequiredCheckoutInformation() {
         String productName = "Sauce Labs Fleece Jacket";
 
-        inventoryPage.getAddToCartButton(productName).click();
-        inventoryPage.getShoppingCartLink().click();
-        CartPage cartPage = new CartPage(page);
-        cartPage.getCheckoutButton().click();
-        CheckoutInformationPage checkoutInformationPage = new CheckoutInformationPage(page);
+        CheckoutFlow checkoutFlow = new CheckoutFlow(inventoryPage);
+        CheckoutInformationPage checkoutInformationPage = checkoutFlow.navigateToInformation(productName);
+
         assertThat(checkoutInformationPage.getTitleLabel()).isVisible();
         assertThat(checkoutInformationPage.getFirstNameInput()).isVisible();
         assertThat(checkoutInformationPage.getLastNameInput()).isVisible();
@@ -25,29 +23,23 @@ public class CheckoutInformationTest extends AuthenticatedBaseTest {
         assertThat(checkoutInformationPage.getCancelButton()).isVisible();
         assertThat(checkoutInformationPage.getContinueButton()).isVisible();
 
-        checkoutInformationPage.getContinueButton().click();
+        checkoutInformationPage.submitEmptyInformation();
         assertThat(checkoutInformationPage.getErrorMessage())
                 .containsText("Error: First Name is required");
     }
 
     @Test
-    void validateCheckoutInformationPageContinuesToOverview() {
+    void validateCheckoutInformationContinuesToOverview() {
         String productName = "Sauce Labs Fleece Jacket";
         String firstName = "John";
         String lastName = "Doe";
         String zipCode = "07601";
 
-        inventoryPage.getAddToCartButton(productName).click();
-        inventoryPage.getShoppingCartLink().click();
-        CartPage cartPage = new CartPage(page);
-        cartPage.getCheckoutButton().click();
-        CheckoutInformationPage checkoutInformationPage = new CheckoutInformationPage(page);
-        checkoutInformationPage.getFirstNameInput().fill(firstName);
-        checkoutInformationPage.getLastNameInput().fill(lastName);
-        checkoutInformationPage.getZipCodeInput().fill(zipCode);
-        checkoutInformationPage.getContinueButton().click();
+        CheckoutFlow checkoutFlow = new CheckoutFlow(inventoryPage);
+        CheckoutInformationPage checkoutInformationPage = checkoutFlow.navigateToInformation(productName);
+        CheckoutOverviewPage checkoutOverviewPage = checkoutInformationPage.submitInformation(firstName,
+                lastName, zipCode);
 
-        CheckoutOverviewPage checkoutOverviewPage = new CheckoutOverviewPage(page);
         assertThat(checkoutOverviewPage.getTitleLabel()).isVisible();
         assertThat(checkoutOverviewPage.getPaymentInformationLabel()).isVisible();
         assertThat(checkoutOverviewPage.getShippingInformationLabel()).isVisible();

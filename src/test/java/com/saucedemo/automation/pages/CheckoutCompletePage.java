@@ -36,7 +36,7 @@ public class CheckoutCompletePage extends BasePage {
         return backHomeButton;
     }
 
-    public InventoryPage clickBackHomeButton() {
+    public InventoryPage returnToInventory() {
         backHomeButton.click();
         return new InventoryPage(page);
     }

@@ -41,5 +41,17 @@ public class CheckoutInformationPage extends BasePage {
 
     public Locator getContinueButton() { return continueButton; }
 
+    public CheckoutOverviewPage submitInformation(String firstName, String lastName, String zipCode) {
+        firstNameInput.fill(firstName);
+        lastNameInput.fill(lastName);
+        zipCodeInput.fill(zipCode);
+        continueButton.click();
+        return new CheckoutOverviewPage(page);
+    }
+
+    public void submitEmptyInformation() {
+        continueButton.click();
+    }
+
     public Locator getErrorMessage() { return errorMessage; }
 }

@@ -65,9 +65,15 @@ public class CheckoutOverviewPage extends BasePage {
                 .filter(new Locator.FilterOptions().setHasText(productName));
     }
 
+    public CheckoutCompletePage finishCheckout() {
+        finishButton.click();
+        return new CheckoutCompletePage(page);
+    }
+
     public Locator getSubtotalAmount() { return subtotalAmount; }
 
     public Locator getTaxAmount() { return taxAmount; }
 
     public Locator getTotalAmount() { return totalAmount; }
+
 }

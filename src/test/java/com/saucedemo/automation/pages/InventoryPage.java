@@ -3,8 +3,8 @@ package com.saucedemo.automation.pages;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.options.AriaRole;
+import com.microsoft.playwright.options.SelectOption;
 
-import java.util.HashMap;
 import java.util.Map;
 
 public class InventoryPage extends BasePage {
@@ -15,14 +15,13 @@ public class InventoryPage extends BasePage {
     private final Locator shoppingCartLink;
     private final Locator openMenuButton;
     private final Locator logoutButton;
-    static final Map<String,String> sortTextValueMap = new HashMap<String,String>();
 
-    static {
-        sortTextValueMap.put("Name (A to Z)", "az");
-        sortTextValueMap.put("Name (Z to A)", "za");
-        sortTextValueMap.put("Price (low to high)", "lohi");
-        sortTextValueMap.put("Price (high to low)", "hilo");
-    }
+    private static final Map<String, String> SORT_TEXT_VALUE_MAP = Map.of(
+            "Name (A to Z)", "az",
+            "Name (Z to A)", "za",
+            "Price (low to high)", "lohi",
+            "Price (high to low)", "hilo"
+    );
 
     public InventoryPage(Page page) {
         super(page);
@@ -58,9 +57,9 @@ public class InventoryPage extends BasePage {
                 .filter(new Locator.FilterOptions().setHasText(productName));
     }
 
-    public Locator getAddToCartButton(String productName) {
-        return getProductCard(productName).getByRole(AriaRole.BUTTON,
-                new Locator.GetByRoleOptions().setName("Add to cart"));
+    public void addProductToCart(String productName) {
+        getProductCard(productName).getByRole(AriaRole.BUTTON,
+                new Locator.GetByRoleOptions().setName("Add to cart")).click();
     }
 
     public Locator getRemoveButton(String productName) {
@@ -72,6 +71,10 @@ public class InventoryPage extends BasePage {
         return page.getByTestId("shopping-cart-badge");
     }
 
+    public void selectSortOption(String optionLabel) {
+        sortByDropdown.selectOption(new SelectOption().setLabel(optionLabel));
+    }
+
     public Locator getSortByDropdown() {
         return sortByDropdown;
     }
@@ -81,11 +84,16 @@ public class InventoryPage extends BasePage {
     }
 
     public String getDropdownValue(String dropdownText) {
-        return sortTextValueMap.get(dropdownText);
+        String value = SORT_TEXT_VALUE_MAP.get(dropdownText);
+        if (value == null) {
+            throw new IllegalArgumentException("Unknown dropdown option: " + dropdownText);
+        }
+        return value;
     }
 
-    public Locator getShoppingCartLink() {
-        return shoppingCartLink;
+    public CartPage openCart() {
+        shoppingCartLink.click();
+        return new CartPage(page);
     }
 
     public LoginPage logout() {

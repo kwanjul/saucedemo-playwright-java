@@ -27,6 +27,11 @@ public class CartPage extends BasePage {
         return checkoutButton;
     }
 
+    public CheckoutInformationPage proceedToCheckout() {
+        checkoutButton.click();
+        return new CheckoutInformationPage(page);
+    }
+
     public Locator getShoppingCartBadge() {
         return shoppingCartBadge;
     }
@@ -48,8 +53,8 @@ public class CartPage extends BasePage {
         return getCartItem(productName).getByTestId("inventory-item-price");
     }
 
-    public Locator getRemoveButton(String productName) {
-        return getCartItem(productName).getByRole(AriaRole.BUTTON,
-                new Locator.GetByRoleOptions().setName("Remove"));
+    public void removeProduct(String productName) {
+        getCartItem(productName).getByRole(AriaRole.BUTTON,
+                new Locator.GetByRoleOptions().setName("Remove")).click();
     }
 }

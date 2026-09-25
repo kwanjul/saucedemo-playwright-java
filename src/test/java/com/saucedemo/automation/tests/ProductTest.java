@@ -1,7 +1,6 @@
 package com.saucedemo.automation.tests;
 
 import com.microsoft.playwright.Locator;
-import com.microsoft.playwright.options.SelectOption;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -12,7 +11,7 @@ import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertTha
 public class ProductTest extends AuthenticatedBaseTest {
 
     @Test
-    void validateSingleProductTest() {
+    void validateSingleProduct() {
         String productName = "Sauce Labs Fleece Jacket";
         String productPrice = "$49.99";
         assertThat(inventoryPage.getInventoryList()).isVisible();
@@ -22,7 +21,7 @@ public class ProductTest extends AuthenticatedBaseTest {
         assertThat(fleeceJacketPrice).hasText(productPrice);
         Locator fleeceJacketImage = inventoryPage.getProductImage(productName);
         assertThat(fleeceJacketImage).isVisible();
-        inventoryPage.getAddToCartButton(productName).click();
+        inventoryPage.addProductToCart(productName);
         Locator removeButton = inventoryPage.getRemoveButton(productName);
         assertThat(removeButton).isVisible();
         Locator cartBadge = inventoryPage.getShoppingCartBadge();
@@ -33,7 +32,7 @@ public class ProductTest extends AuthenticatedBaseTest {
     @Test
     void validateProductPriceSortLowToHigh() {
         String sortOption = "Price (low to high)";
-        inventoryPage.getSortByDropdown().selectOption(new SelectOption().setLabel(sortOption));
+        inventoryPage.selectSortOption(sortOption);
         assertThat(inventoryPage.getSortByDropdown()).hasValue(inventoryPage.getDropdownValue(sortOption));
         Locator prices = inventoryPage.getProductPrices();
         int count = prices.count();
