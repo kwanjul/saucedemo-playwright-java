@@ -35,4 +35,9 @@ public class CheckoutCompletePage extends BasePage {
     public Locator getBackHomeButton() {
         return backHomeButton;
     }
+
+    public InventoryPage clickBackHomeButton() {
+        backHomeButton.click();
+        return new InventoryPage(page);
+    }
 }

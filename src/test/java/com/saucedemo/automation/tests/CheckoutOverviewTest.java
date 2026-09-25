@@ -69,4 +69,32 @@ public class CheckoutOverviewTest extends AuthenticatedBaseTest {
                 .hasText("Your order has been dispatched, and will arrive just as fast as the pony can get there!");
         assertThat(checkoutCompletePage.getBackHomeButton()).isVisible();
     }
+
+    @Test
+    void validateBackHomeAfterOrderCompletion() {
+        String productName = "Sauce Labs Fleece Jacket";
+        String firstName = "John";
+        String lastName = "Doe";
+        String zipCode = "07601";
+
+        inventoryPage.getAddToCartButton(productName).click();
+        inventoryPage.getShoppingCartLink().click();
+        CartPage cartPage = new CartPage(page);
+        cartPage.getCheckoutButton().click();
+
+        CheckoutInformationPage checkoutInformationPage = new CheckoutInformationPage(page);
+        checkoutInformationPage.getFirstNameInput().fill(firstName);
+        checkoutInformationPage.getLastNameInput().fill(lastName);
+        checkoutInformationPage.getZipCodeInput().fill(zipCode);
+        checkoutInformationPage.getContinueButton().click();
+
+        CheckoutOverviewPage checkoutOverviewPage = new CheckoutOverviewPage(page);
+        checkoutOverviewPage.getFinishButton().click();
+
+        CheckoutCompletePage checkoutCompletePage = new CheckoutCompletePage(page);
+        inventoryPage = checkoutCompletePage.clickBackHomeButton();
+        assertThat(inventoryPage.getInventoryList()).isVisible();
+        assertThat(inventoryPage.getShoppingCartBadge()).hasCount(0);
+    }
+
 }
