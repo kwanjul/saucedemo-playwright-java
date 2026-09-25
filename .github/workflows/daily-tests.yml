@@ -1,0 +1,58 @@
+name: Daily Playwright Tests
+
+on:
+  schedule:
+    - cron: "0 8 * * *"
+      timezone: "America/New_York"
+
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Test on ${{ matrix.browser }}
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        browser:
+          - chromium
+          - firefox
+          - webkit
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: "17"
+          cache: maven
+
+      - name: Install Playwright browser
+        run: >
+          mvn -B -ntp exec:java
+          -Dexec.mainClass=com.microsoft.playwright.CLI
+          -Dexec.args="install --with-deps ${{ matrix.browser }}"
+
+      - name: Run tests
+        env:
+          TEST_PASSWORD: ${{ secrets.TEST_PASSWORD }}
+        run: >
+          mvn -B -ntp clean test
+          -Dtest.password="$TEST_PASSWORD"
+          -Dbrowser=${{ matrix.browser }}
+          -Dheadless=true
+
+      - name: Upload test reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-reports-${{ matrix.browser }}
+          path: target/surefire-reports/
+          retention-days: 14
