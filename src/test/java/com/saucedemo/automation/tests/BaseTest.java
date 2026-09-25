@@ -3,6 +3,7 @@ package com.saucedemo.automation.tests;
 import com.saucedemo.automation.config.TestConfig;
 import com.microsoft.playwright.*;
 import org.testng.annotations.*;
+import java.util.Locale;
 
 /**
  * Base test class that manages Playwright browser lifecycle for all integration tests.
@@ -24,8 +25,17 @@ public abstract class BaseTest {
 
         playwright.selectors().setTestIdAttribute("data-test");
 
-        browser = playwright.chromium().launch(new BrowserType.LaunchOptions().
-                setHeadless(TestConfig.getPropertyBoolean("headless")));
+        String browserName = TestConfig.getProperty("browser").trim().toLowerCase(Locale.ROOT);
+
+        BrowserType browserType = switch (browserName) {
+            case "chromium" -> playwright.chromium();
+            case "firefox"  -> playwright.firefox();
+            case "webkit"   -> playwright.webkit();
+            default -> throw new IllegalArgumentException("Unsupported browser: " + browserName);
+        };
+
+        browser = browserType.launch(new BrowserType.LaunchOptions()
+                .setHeadless(TestConfig.getPropertyBoolean("headless")));
     }
 
     @BeforeMethod
