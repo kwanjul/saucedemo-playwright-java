@@ -2,7 +2,7 @@ name: Daily Playwright Tests
 
 on:
   schedule:
-    - cron: "0 8 * * *"
+    - cron: "0 8 * * 1-5"
       timezone: "America/New_York"
 
   workflow_dispatch:
