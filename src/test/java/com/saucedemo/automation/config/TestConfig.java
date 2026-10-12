@@ -2,6 +2,7 @@ package com.saucedemo.automation.config;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Locale;
 import java.util.Properties;
 
 public final class TestConfig {
@@ -22,14 +23,27 @@ public final class TestConfig {
     private TestConfig() { }
 
     public static String getProperty(String property) {
-        String value = System.getProperty(property, PROPERTIES.getProperty(property));
+        String value = System.getProperty(property);
 
         if (value == null || value.isBlank()) {
-            throw new IllegalArgumentException("Configuration property is missing: " + property);
+            String environmentVariable = property
+                    .toUpperCase(Locale.ROOT)
+                    .replace('.', '_');
+
+            value = System.getenv(environmentVariable);
         }
+
+        if (value == null || value.isBlank()) {
+            value = PROPERTIES.getProperty(property);
+        }
+
+        if (value == null || value.isBlank()) {
+            throw new IllegalArgumentException(
+                    "Configuration property is missing: " + property);
+        }
+
         return value;
     }
-
     public static boolean getPropertyBoolean(String property) {
         String value = getProperty(property).trim();
         if (!value.equalsIgnoreCase("true") && !value.equalsIgnoreCase("false")) {
