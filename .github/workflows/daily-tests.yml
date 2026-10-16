@@ -51,9 +51,11 @@ jobs:
 
       - name: Generate HTML report
         if: always()
-        run: >
-          mvn -B -ntp
-          org.apache.maven.plugins:maven-surefire-report-plugin:3.6.0:report-only
+        run: |
+          REPORT_TIMESTAMP=$(TZ=America/New_York date +"%Y-%m-%dT%H:%M:%S%:z")
+          mvn -B -ntp \
+            org.apache.maven.plugins:maven-surefire-report-plugin:3.6.0:report-only \
+            -Dproject.build.outputTimestamp="$REPORT_TIMESTAMP"
 
       - name: Upload downloadable report
         if: always()
