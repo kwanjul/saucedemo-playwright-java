@@ -4,11 +4,12 @@ on:
   schedule:
     - cron: "0 8 * * 1-5"
       timezone: "America/New_York"
-
   workflow_dispatch:
 
 permissions:
   contents: read
+  pages: write
+  id-token: write
 
 jobs:
   test:
@@ -22,6 +23,11 @@ jobs:
           - chromium
           - firefox
           - webkit
+
+    env:
+      TEST_USERNAME: ${{ secrets.TEST_USERNAME }}
+      TEST_PASSWORD: ${{ secrets.TEST_PASSWORD }}
+      PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: "1"
 
     steps:
       - name: Check out repository
@@ -41,25 +47,67 @@ jobs:
           -Dexec.args="install --with-deps ${{ matrix.browser }}"
 
       - name: Run tests
-        env:
-          TEST_PASSWORD: ${{ secrets.TEST_PASSWORD }}
-          PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: "1"
-        run: >
-          mvn -B -ntp clean test
-          -Dbrowser=${{ matrix.browser }}
-          -Dheadless=true
+        run: mvn -B -ntp test -Dbrowser=${{ matrix.browser }}
 
-      - name: Generate HTML test report
+      - name: Generate HTML report
         if: always()
         run: >
           mvn -B -ntp
           org.apache.maven.plugins:maven-surefire-report-plugin:3.6.0:report-only
 
-      - name: Upload HTML test report
+      - name: Upload downloadable report
         if: always()
         uses: actions/upload-artifact@v7
         with:
           name: test-report-${{ matrix.browser }}
           path: target/reports/
-          if-no-files-found: warn
           retention-days: 14
+          if-no-files-found: warn
+
+  publish-report:
+    name: Publish reports to GitHub Pages
+    needs: test
+    if: ${{ always() && !cancelled() }}
+    runs-on: ubuntu-24.04
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Download browser reports
+        uses: actions/download-artifact@v8
+        with:
+          pattern: test-report-*
+          path: pages
+
+      - name: Create report index
+        run: |
+          printf '%s\n' \
+            '<!DOCTYPE html>' \
+            '<html lang="en">' \
+            '<head>' \
+            '  <meta charset="UTF-8">' \
+            '  <meta name="viewport" content="width=device-width, initial-scale=1.0">' \
+            '  <title>Sauce Demo Playwright Test Reports</title>' \
+            '</head>' \
+            '<body>' \
+            '  <h1>Sauce Demo Playwright Test Reports</h1>' \
+            '  <p>Select a browser to view its latest test report:</p>' \
+            '  <ul>' \
+            '    <li><a href="test-report-chromium/surefire.html">Chromium report</a></li>' \
+            '    <li><a href="test-report-firefox/surefire.html">Firefox report</a></li>' \
+            '    <li><a href="test-report-webkit/surefire.html">WebKit report</a></li>' \
+            '  </ul>' \
+            '</body>' \
+            '</html>' \
+            > pages/index.html
+
+      - name: Upload GitHub Pages content
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: pages
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
