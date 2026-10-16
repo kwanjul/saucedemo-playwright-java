@@ -4,13 +4,13 @@ A Playwright and Java test automation framework for the [Sauce Demo](https://www
 
 The project demonstrates maintainable UI automation using the Page Object Model, TestNG, Playwright locators and assertions, reusable workflow classes, configuration overrides, cross-browser execution, and CSV-driven testing.
 
+The test suite runs against Chromium, Firefox, and WebKit every weekday and can also be triggered manually through GitHub Actions.
+
 ## Test Reports
 
 View the latest automated cross-browser test results:
 
 [View Playwright Test Reports](https://kwanjul.github.io/saucedemo-playwright-java/)
-
-The test suite runs against Chromium, Firefox, and WebKit every weekday and can also be triggered manually through GitHub Actions.
 
 ## Technology Stack
 
