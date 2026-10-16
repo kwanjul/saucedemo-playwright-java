@@ -52,7 +52,8 @@ jobs:
       - name: Generate HTML report
         if: always()
         run: |
-          REPORT_TIMESTAMP=$(TZ=America/New_York date +"%Y-%m-%dT%H:%M:%S%:z")
+          REPORT_DATE=$(TZ=America/New_York date +"%Y-%m-%d")
+          REPORT_TIMESTAMP="${REPORT_DATE}T12:00:00Z"
           mvn -B -ntp \
             org.apache.maven.plugins:maven-surefire-report-plugin:3.6.0:report-only \
             -Dproject.build.outputTimestamp="$REPORT_TIMESTAMP"
@@ -106,10 +107,10 @@ jobs:
             > pages/index.html
 
       - name: Upload GitHub Pages content
-        uses: actions/upload-pages-artifact@v4
+        uses: actions/upload-pages-artifact@v5
         with:
           path: pages
 
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
