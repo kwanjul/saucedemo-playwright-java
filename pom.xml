@@ -8,6 +8,9 @@
     <artifactId>saucedemo-playwright-java</artifactId>
     <version>1.0-SNAPSHOT</version>
 
+    <name>saucedemo-playwright-java</name>
+    <url>https://github.com/kwanjul/saucedemo-playwright-java</url>
+
     <properties>
         <playwright.version>1.62.0</playwright.version>
         <testng.version>7.11.0</testng.version>
